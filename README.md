@@ -1,40 +1,47 @@
 # DEADLY DOZEN — Road to Race 2027
 
-Mobile-first team training PWA for two athletes preparing for the Deadly Sprint in Sindelfingen on 20 March 2027. The 16-week plan begins 30 November 2026.
+Mobile-first team training PWA for two athletes preparing for the Women’s Doubles Deadly Sprint in Sindelfingen on 20 March 2027. **Version 1.1.0** · The 11-week specific plan starts Monday, 4 January 2027.
 
-## Development
+## Version 1.1.0
+
+- Replaced the former 16-week calendar with an 11-week periodization from 4 January to race day. Before 4 January the dashboard counts down to training start; optional logs and tests remain available.
+- Added station-by-station strategies with any number of athlete segments, exact workload validation, named variants, a qualitative fatigue/safety/next-run assessment, and tested-versus-planned status.
+- Added segment and strategy trials with load, exact repetitions or distance, fatigue context, previous work, RPE for both partners, grip/shoulder fatigue, switch time and run impact. Strategy comparisons require matched conditions and repeated trials; there is no linear extrapolation from partial reps.
+- Expanded Race Mode for live athlete changes, section workload, remaining reps/metres, switch timing, spontaneous changes and planned-versus-actual simulation records.
+- Kept the data shape additive. Existing local records, race settings and accounts are retained; the new strategy fields live in the existing JSON payload. No database schema migration is needed.
+- Updated service-worker cache version to refresh the installed PWA.
+
+## Development and checks
 
 - `npm ci`
 - `npm run dev`
 - `npm run build`
 - `npm test`
 
-## Host on GitHub Pages
+## GitHub Pages deployment
 
-Create a **public** repository named `deadly-dozen-road-to-race-2027`, push this project to branch `main`, then open **Settings → Pages** and select **GitHub Actions** as the source. `.github/workflows/deploy.yml` builds and publishes the app on each push. The build uses the repository-specific base path. When the Pages workflow succeeds the URL is `https://<your-github-login>.github.io/deadly-dozen-road-to-race-2027/`.
+The existing repository is `6h9bcmf9yk-netizen/deadly-dozen-road-to-race-2027`. Its `main` branch deploys through `.github/workflows/deploy.yml` using the repository-specific Vite base path. The published URL remains <https://6h9bcmf9yk-netizen.github.io/deadly-dozen-road-to-race-2027/>.
 
-## Shared Supabase setup (free tier, account actions required)
+## Shared Supabase setup
 
-A hosted Supabase project is required for two-phone synchronization. Current Supabase Free includes Auth and a Postgres database (500 MB, 50,000 MAU); inactive free projects can pause after one week. Review current terms at <https://supabase.com/pricing>.
+Two-phone synchronization requires the team’s own Supabase project. The existing SQL migration `supabase/migrations/202611250001_team_sync.sql` creates the two-person team, membership, record tables and RLS policies. Version 1.1.0 uses those same tables and keeps new strategy/simulation fields in existing JSON payloads, so do not reset the project or rerun schema changes against production data.
 
 1. Create a Supabase project.
-2. In SQL Editor, run `supabase/migrations/202611250001_team_sync.sql`.
-3. In **Project Settings → API**, copy the Project URL and the public anon/publishable key. Never use a service-role key in the app.
-4. In app Settings, enter URL/key and save. Create an account for each athlete, confirm email if required, sign in, then one athlete creates the team and shares the generated invite code privately. The other signs in and joins with the code.
-5. Use **Settings → Sync now** or re-open the app while online to fetch data.
+2. If this is a new project, run the SQL migration in Supabase SQL Editor. If the project was already configured for version 1.0.0, keep it as is.
+3. In **Project Settings → API**, copy the Project URL and public anon/publishable key. Never use a service-role key in the app.
+4. On each phone, enter URL/key in app Settings, register or sign in, then one athlete creates the team and privately shares the invite code. The other athlete joins that team.
+5. The header sync badge reports local, pending or synchronized state. Use **Sync now** while online if needed.
 
-The migration limits each team to two members, protects all records with RLS, and exposes no data to anonymous visitors. Invite codes are random and should only be sent directly to the training partner. GitHub Pages is public hosting for the application shell; training data is not committed to the repository.
+Until a Supabase project, accounts and team membership are configured, records stay in that browser’s local storage. GitHub Pages serves only the public app shell; it does not contain private training data. Keep JSON backups before device changes. JSON import merges by record ID.
 
-## Data & offline use
+## Offline use and iPhone installation
 
-Records save immediately in browser local storage and export to JSON or CSV. The service worker caches the plan/app shell, so the plan opens offline. Locally recorded changes remain on the device while offline and sync after reconnection. For team use, sign into Supabase on each phone; make regular JSON exports as independent backups. Import merges records by ID.
+The service worker caches the application shell and assets. A previously opened app can display the plan offline; edits are stored locally and sync after connection returns. On iPhone, open the published link in Safari → **Share** → **Add to Home Screen** → **Add**. iOS may suspend scripts in the background; Race Mode derives elapsed time from timestamps when the app resumes.
 
-The current client prepares per-record synchronization and does not upload data until a signed-in user has joined a team. Review Supabase's RLS policies before changing the schema. No secrets are stored in source.
+## Official event rules
 
-## PWA install (iPhone)
+- Event-specific Sprint page: <https://deadlydozen.de/sprint> — 12 × 200 m (2.4 km), Sprint Women’s loads and half the standard reps/distances.
+- Current rulebook: <https://www.deadlydozen.com/rulebook>.
+- Official Judge Pack movement notes and Pairs handling: <https://www.deadlydozen.com/judgepack>.
 
-Open the deployed link in Safari → Share → **Add to Home Screen** → Add. The service worker and manifest provide the app shell; iOS may limit background execution, but timers compute elapsed time from system timestamps after returning to the app.
-
-## Competition rules
-
-Official German event page: <https://deadlydozen.de/sprint>. Official current rulebook: <https://www.deadlydozen.com/rulebook>. The event page lists the 12 × 200 m runs, women's loads and half reps/distances. Check the current book for movement standards, penalties and exact equipment rules before race day. Parameters can be changed in the app as event details evolve.
+The event page says Pairs share the Labour work flexibly and run together. The international Judge Pack says pairs remain together, stay stationary during rests and place equipment on the floor instead of handing it over. We found no official requirement for the exact partner-exchange point within a Labour; local race briefings and the current rulebook take precedence. The app records this uncertainty instead of asserting a made-up rule.
