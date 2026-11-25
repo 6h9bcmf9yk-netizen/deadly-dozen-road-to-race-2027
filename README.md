@@ -1,8 +1,8 @@
 # DEADLY DOZEN — Road to Race 2027
 
-Mobile-first team training PWA for two athletes preparing for the Women’s Doubles Deadly Sprint in Sindelfingen on 20 March 2027. **Version 1.1.1** · The 11-week specific plan starts Monday, 4 January 2027.
+Mobile-first team training PWA for two athletes preparing for the Women’s Doubles Deadly Sprint in Sindelfingen on 20 March 2027. **Version 1.1.2** · The 11-week specific plan starts Monday, 4 January 2027.
 
-## Version 1.1.1
+## Version 1.1.2
 
 - Replaced the former 16-week calendar with an 11-week periodization from 4 January to race day. Before 4 January the dashboard counts down to training start; optional logs and tests remain available.
 - Added station-by-station strategies with any number of athlete segments, exact workload validation, named variants, a qualitative fatigue/safety/next-run assessment, and tested-versus-planned status.
@@ -10,6 +10,7 @@ Mobile-first team training PWA for two athletes preparing for the Women’s Doub
 - Expanded Race Mode for live athlete changes, section workload, remaining reps/metres, switch timing, spontaneous changes and planned-versus-actual simulation records.
 - Kept the data shape additive. Existing local records, race settings and accounts are retained; the new strategy fields live in the existing JSON payload. No database schema migration is needed.
 - Added persistent top navigation for tablet and desktop while retaining the bottom navigation on phones.
+- Made modal close and cancel actions explicit so they cannot trigger form saves accidentally.
 - Updated service-worker cache version to refresh the installed PWA.
 
 ## Development and checks
